@@ -47,6 +47,7 @@ async function initProjects() {
     btnAppartement.classList.add("hidden")
     btnHotel.classList.add("hidden")
 }
+// filtre galerie
 function galleryFilter(projects) {
     btnAll.addEventListener("click", (event) => {
         event.preventDefault
