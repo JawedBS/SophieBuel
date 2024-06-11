@@ -15,8 +15,12 @@ const modalexit = document.querySelector(".modal-exit")
 const modalexitAll = document.querySelector(".modal-exitAll")
 const modalreturn = document.querySelector(".modal-return")
 const modalButton = document.querySelector(".modal-button")
+const modalButton2 = document.querySelector("#modal2 .modal-button")
 const modalSecond = document.getElementById("modal2")
-
+const fileInput = document.getElementById('fileInput');
+const reader = new FileReader();
+const addPicture = document.querySelector('.add-picture');
+const deleteIcone = document.querySelector('.icone-delete')
 
 async function getProjects() {
     return fetch("http://localhost:5678/api/works")
@@ -82,9 +86,29 @@ function galleryFilter(projects) {
         const imageElement = document.createElement("img");
         const iconeDelete = document.createElement("i");
         imageElement.src = projects[i].imageUrl;
+        iconeDelete.setAttribute("id", projects[i].id)
         workElement.appendChild(imageElement);
         workElement.appendChild(iconeDelete);
         imagemodal.appendChild(workElement);
+        iconeDelete.addEventListener('click', (event) => {
+            event.preventDefault()
+            const apiUrl = 'http://localhost:5678/api/works/'
+            const fileIdToDelete = event.currentTarget.id
+
+            fetch(`${apiUrl}/${fileIdToDelete}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization' : 'Bearer ' + token,
+                },
+              })
+              .then((response) => {
+                if (response.ok) {
+                    imagemodal.innerHTML= ""
+                    gallery.innerHTML=""
+                    initProjects()
+                } 
+            })
+        })
     }
     const divsDansImagemodal = document.getElementsByClassName("imagemodal")[0].getElementsByTagName("div");
     for (let i = 0; i < divsDansImagemodal.length; i++) {
@@ -92,9 +116,69 @@ function galleryFilter(projects) {
 }
 const icones = document.querySelectorAll(".imageGroup > i");
 icones.forEach(icone => {
-    icone.classList.add("fa-solid", "fa-trash-can");
-});
+    icone.classList.add("icone-delete", "fa-solid", "fa-trash-can");
+    })
+
 }
+
+fileInput.addEventListener('change', function(event) {
+  const file = event.target.files[0];
+  if (file) {
+    
+    reader.onload = async function(e) {
+      const imagePreview = new Image();
+      imagePreview.src = e.target.result;
+      imagePreview.onload = function() {
+        addPicture.innerHTML = '';
+        addPicture.appendChild(imagePreview);
+      }
+    }
+    reader.readAsDataURL(file);
+  } else {
+    addPicture.innerHTML = 'Aucune image sélectionnée';
+  }
+});
+
+const category = document.getElementById("category")
+const title = document.getElementById("title")
+modalButton2.addEventListener('click', function (event) {
+    event.preventDefault
+    //const englobant les 3 valeurs?
+    const categoryValue = Number(category.value)
+    const titleValue = title.value
+    const file = fileInput.files[0];
+    const formData = new FormData()
+    formData.append('category', categoryValue);
+formData.append('title', titleValue);
+formData.append('image', file);
+    //readastext?
+    fetch('http://localhost:5678/api/works', { 
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Authorization' : 'Bearer ' + token
+        },
+        body: formData      
+        
+    })
+    //permet de vérifier la connexion avec le serveur
+    .then((response) => {
+        if (response.ok) {
+            imagemodal.innerHTML= ""
+                    gallery.innerHTML=""
+                    initProjects()
+                    modal.classList.add("hidden")
+                    modalSecond.classList.add("hidden")
+            return response.json()
+        } //else connexion pas passé
+    })
+    //permet de savoir si tout est valide
+    .then((result) => {
+        console.log(result)
+    } )
+    //code pour vérifier la réponse de l'api?
+})    
+
 
  // gestion galerie
 

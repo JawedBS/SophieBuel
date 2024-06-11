@@ -78,7 +78,7 @@
 				<p id="titlemodal">Ajout photo</p>
 				<div class="add-picture">
 					<i class="fa-regular fa-image"></i>
-					<button>+ Ajouter photo</button>
+					<button><input type="file" id="fileInput">+ Ajouter une photo</button>
 					<p>jpg,png : 4mo max</p>
 				</div>
 				<form action="#" method="post">
@@ -86,10 +86,10 @@
 					<input type="text" name="title" id="title">
 					<label for="category">Catégorie</label>
 					<select name="category" id="category">
-						<option value="All"></option>
-						<option value="Objets">Objets</option>
-						<option value="Appartements">Appartements</option>
-						<option value="Hotels & Restaurants">Hotels & Restaurants</option>
+						<option disabled></option>
+						<option value="1">Objets</option>
+						<option value="2">Appartements</option>
+						<option value="3">Hotels & Restaurants</option>
 					</select>
 				</form>
 				<div class="modal-line"></div>
